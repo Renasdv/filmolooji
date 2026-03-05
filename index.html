@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmoloji | Sinemanın Dijital Dünyası</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff3d00;
+            --accent: #ff9100;
+            --bg: #0a0a0b;
+            --card-bg: #161618;
+            --text: #ffffff;
+            --glass: rgba(20, 20, 22, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- MODERN NAV --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 6%;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            position: fixed;
+            top: 0; width: 100%; z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .logo span { color: var(--primary); }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        #searchInput {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 25px;
+            border-radius: 12px;
+            color: white;
+            width: 350px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            outline: none;
+        }
+
+        #searchInput:focus {
+            width: 450px;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(255, 61, 0, 0.2);
+        }
+
+        /* --- MAIN GRID --- */
+        .container { padding: 120px 6% 50px; }
+        
+        .hero-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hero-title::before {
+            content: '';
+            width: 6px;
+            height: 35px;
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 35px;
+        }
+
+        /* --- MOVIE CARDS UX --- */
+        .movie-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: 0.4s;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .movie-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            border-color: rgba(255, 61, 0, 0.4);
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 330px;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .movie-card:hover img { transform: scale(1.05); }
+
+        .badge {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            padding: 5px 12px;
+            border-radius: 8px;
+            color: #ffc107;
+            font-weight: 700;
+            font-size: 13px;
+            z-index: 2;
+        }
+
+        .movie-info {
+            padding: 20px;
+            background: linear-gradient(to top, var(--card-bg), transparent);
+        }
+
+        .movie-info h3 {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- PLAYER MODAL --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.96);
+            z-index: 2000;
+            padding: 40px;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 0 100px rgba(255, 61, 0, 0.15);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -50px; right: 0;
+            color: white; font-size: 40px;
+            cursor: pointer; transition: 0.3s;
+        }
+
+        .close-modal:hover { color: var(--primary); }
+
+        iframe { width: 100%; height: 100%; border: none; }
+
+        @media (max-width: 768px) {
+            #searchInput { width: 180px; }
+            #searchInput:focus { width: 220px; }
+            .container { padding-top: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo" onclick="location.reload()">FILM<span>OLOJİ</span></a>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Film keşfetmeye başla...">
+        </div>
+    </header>
+
+    <main class="container">
+        <h2 class="hero-title" id="pageTitle">Trend Filmler</h2>
+        <div id="movieGrid" class="movie-grid"></div>
+    </main>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="playerArea" style="height: 100%;"></div>
+        </div>
+    </div>
+
+    <script>
+        // API AYARLARI
+        const API_KEY = '121b7340acdb3b8503f614416bac6d91'; 
+        const TMDB_BASE = 'https://api.themoviedb.org/3';
+        const IMG_PATH = 'https://image.tmdb.org/t/p/w500';
+
+        const movieGrid = document.getElementById('movieGrid');
+        const searchInput = document.getElementById('searchInput');
+        const modal = document.getElementById('videoModal');
+        const playerArea = document.getElementById('playerArea');
+
+        async function loadMovies(path, title = "Trend Filmler") {
+            try {
+                document.getElementById('pageTitle').innerText = title;
+                const res = await fetch(`${TMDB_BASE}${path}&api_key=${API_KEY}&language=tr-TR`);
+                const data = await res.json();
+                render(data.results);
+            } catch (err) {
+                movieGrid.innerHTML = `<p style="text-align:center; grid-column: 1/-1;">Bağlantı hatası: Lütfen API anahtarınızı kontrol edin.</p>`;
+            }
+        }
+
+        function render(movies) {
+            movieGrid.innerHTML = '';
+            movies.forEach(movie => {
+                if(!movie.poster_path) return;
+                const card = document.createElement('div');
+                card.className = 'movie-card';
+                card.innerHTML = `
+                    <div class="badge">★ ${movie.vote_average.toFixed(1)}</div>
+                    <img src="${IMG_PATH + movie.poster_path}" alt="${movie.title}">
+                    <div class="movie-info">
+                        <h3>${movie.title}</h3>
+                    </div>
+                `;
+                card.onclick = () => playMovie(movie.id);
+                movieGrid.appendChild(card);
+            });
+        }
+
+        async function playMovie(id) {
+            const res = await fetch(`${TMDB_BASE}/movie/${id}?api_key=${API_KEY}`);
+            const data = await res.json();
+            const imdb = data.imdb_id;
+
+            if(imdb) {
+                // Senin API Kaynağın: vidsrc-embed.ru
+                playerArea.innerHTML = `<iframe src="https://vidsrc-embed.ru/embed/movie?imdb=${imdb}" allowfullscreen></iframe>`;
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            } else {
+                alert("Üzgünüz, bu film için oynatıcı kaynağı bulunamadı.");
+            }
+        }
+
+        searchInput.onkeypress = (e) => {
+            if(e.key === 'Enter' && searchInput.value !== '') {
+                loadMovies(`/search/movie?query=${encodeURIComponent(searchInput.value)}`, `Sonuçlar: ${searchInput.value}`);
+            }
+        }
+
+        document.querySelector('.close-modal').onclick = () => {
+            modal.style.display = 'none';
+            playerArea.innerHTML = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        window.onclick = (e) => { if(e.target == modal) document.querySelector('.close-modal').onclick(); }
+
+        // Başlat
+        loadMovies('/movie/popular?page=1');
+    </script>
+</body>
+</html>
